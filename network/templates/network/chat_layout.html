@@ -1,0 +1,242 @@
+
+{% load static %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!------ Include the above in your HEAD tag ---------->
+<!--Bootsrap 4 CDN-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+<!--Fontawesome CDN-->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<link rel="stylesheet" href="{% static 'network/tweet_styles.css' %}">
+
+
+<!DOCTYPE html><html class=''>
+<head>
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+
+
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+</head>
+<body>
+
+
+<div id="frame" class="row">
+	<div id="sidepanel" class="col-sm-3">
+		<div id="profile">
+			<div class="wrap">
+        {% if user.is_authenticated %}
+        <img id="profile-img" src="{{photo.photolink}}" class="online" alt="" />
+       
+				<p> {{request.user.username}}</p>
+        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+        
+				<div id="status-options">
+					<ul>
+					
+          <li> <a id="status-online" href="{% url 'profile' username=user.username %}" style="color: white;"><p>Profile</p></a>  </li>   
+           <li><a  id="status-away" href="{% url 'logout' %}" style="color: white;"><p>logout</p></a> </li>
+           </ul>
+        </div>
+        <div id="expanded">
+          <label for="profile"><i class="fa fa-user" aria-hidden="true"></i></label>
+          <a href="{% url 'profile' username=user.username %}"><input name="profile" type="text" value="Profile" /></a>	
+					<label for="logout"><i class="fa fa-sign-out" aria-hidden="true"></i></label>
+				  <a href="{% url 'logout' %}"><input name="logout" type="text" value="Logout" /></a>	
+				
+			
+				</div>
+			</div>
+		</div>
+		
+        {%else%}
+        <img id="profile-img" src="https://static.thenounproject.com/png/994628-200.png" class="online" alt="" />
+       
+				<p>anonymous</p>
+        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+        
+				<div id="status-options">
+					<ul>
+					
+         <li><a  id="status-away" href="{% url 'login' %}" style="color: white;"><p>login</p></a> </li>
+           </ul>
+        </div>
+        <div id="expanded">
+					<label for="logout"><i class="fa fa-sign-in" aria-hidden="true"></i></label>
+				  <a href="{% url 'login' %}"><input name="login" type="text" value="login" /></a>	
+			
+				</div>
+			</div>
+		</div>
+
+       
+        {%endif%}
+	
+    <div class="container">
+      <div class="row">
+      
+      
+     
+      <!-- code start -->
+      {% if user.is_authenticated %}
+      <div class="twPc-div">
+
+          <a class="twPc-bg twPc-block"></a>
+      
+        <div>
+      
+          <a title="profile photo" href="{%url 'profile' request.user.username%}" class="twPc-avatarLink">
+            <img alt="profile photo" src="{{photo.photolink}}" class="twPc-avatarImg">
+          </a>
+      
+          <div class="twPc-divUser">
+            <div class="twPc-divName">
+              <a href="https://twitter.com/mertskaplan"> {{request.user.username}}</a>
+            </div>
+            <span>
+              <a href="{%url 'profile' request.user.username%}">@<span> {{request.user.username}}</span></a>
+            </span>
+          </div>
+      
+          <div class="twPc-divStats">
+            <ul class="twPc-Arrange">
+              <li class="twPc-ArrangeSizeFit">
+                <a href="https://twitter.com/mertskaplan" title="9.840 Tweet">
+                  <span class="twPc-StatLabel twPc-block">Tweets</span>
+                  <span class="twPc-StatValue">{{current_posts}}</span>
+                </a>
+              </li>
+              <li class="twPc-ArrangeSizeFit">
+                <a href="https://twitter.com/mertskaplan/following" title="885 Following">
+                  <span class="twPc-StatLabel twPc-block">Following</span>
+                  <span class="twPc-StatValue">{{current_totalfollowing}}</span>
+                </a>
+              </li>
+              <li class="twPc-ArrangeSizeFit">
+                <a href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                  <span class="twPc-StatLabel twPc-block">Followers</span>
+                  <span class="twPc-StatValue">{{current_totalfollower}}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- code end -->
+      {%else%}
+      <div class="twPc-div">
+
+        <a class="twPc-bg twPc-block"></a>
+    
+      <div>
+    
+        <a title="Mert S. Kaplan" href="#" class="twPc-avatarLink">
+          <img alt="Unknown user pic" src="https://static.thenounproject.com/png/994628-200.png" class="twPc-avatarImg">
+        </a>
+    
+        <div class="twPc-divUser">
+          <div class="twPc-divName">
+            <div  style="color: black;"> anonymous</div>
+          </div>
+          
+          <span>
+            <div style="color: black;">@<span > anonymous</span></div>
+          </span>
+          <div>
+            <a href="{%url 'login'%}"> <span> Sign in</span></a>
+          </div>
+        </div>
+    
+
+      </div>
+    </div>
+    <!-- code end -->
+      {%endif%}
+      </div>
+      </div>
+      {% if user.is_authenticated %}
+      
+      <div id="bottom-bar">
+        <a href="{%url 'index'%}"><button id="settings"><i class="fa fa-pencil" aria-hidden="true"></i> New tweet</button></a>
+      <a href=" {% url 'config' username=request.user.username %}"><button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> Settings</button></a>
+      </div>
+      {%endif%}
+    </div>
+    
+   
+	<div class="content col-sm-6">
+		<div class="contact-profile">
+		<div class="row">
+      {% if user.is_authenticated %}
+      <div class="col-sm-3" >
+      <h3 ><a id="all_posts" class="active_post" href="{%url 'index'%}" >Home</a></h3>
+      </div>
+      <div class="col-sm-9" >
+        <h3><a id="following_posts" class="active_post" href="{%url 'following' request.user.username%}">Following</a></h3>
+      </div>
+    {%else%}
+    <div class="col-sm-3" >
+      <h3 ><a id="all_posts" class="active_post" href="{%url 'index'%}" >Home</a></h3>
+      </div>
+      <div class="col-sm-9" >
+        <h3><a id="following_posts" class="active_post" href="{%url 'login'%}">Login</a></h3>
+      </div>
+
+      {%endif%}
+    </div>
+    </div>
+   
+		<div class="messages">
+      {% block body %}
+      {% endblock %}
+		</div>
+
+    </div>
+    
+    
+
+    
+    <div id="sidepanel" class="col-sm-3">
+		<div id="profile">
+			<div class="wrap">
+		{%if non_followers%}
+				<h1 style="font-size: 20px;"><i class="fa fa-twitter" aria-hidden="true" style="font-size: 30px;"></i>People to Follow</h1>
+				
+		
+			</div>
+		</div>
+
+		<div id="contacts">
+			<ul>
+        {%for follower in non_followers%}
+        <a href="{%url 'profile' follower.username%}" style="color: white; text-decoration: none;">
+				<li class="contact">
+					<div class="wrap">
+						<span class="contact-status online"></span>
+						<img src="https://i.stack.imgur.com/34AD2.jpg" alt="" />
+						<div class="meta">
+							<p class="name">{{follower.username}}</p>
+							<p class="preview">{{follower.email}}</p>
+						</div>
+					</div>
+        </li>
+      </a>
+        {%endfor%}
+        {%endif%}
+
+	
+			</ul>
+		</div>
+
+	</div>
+</div>
+
+
+      <script src="{% static 'network/network.js' %}"></script>
+</body></html>

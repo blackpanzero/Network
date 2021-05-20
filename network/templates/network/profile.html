@@ -1,0 +1,182 @@
+{% extends "network/chat_layout.html" %}
+{% load static %}
+
+{% block title %}
+    {% if profileuser.first_name and profileuser.last_name %}
+    {{profileuser.first_name|title}} {{profileuser.last_name|title}} | Network
+    {% else %}
+    {{profileuser.username|title}} | Network
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+
+<!-- code start -->
+<div class="twPc-div">
+  <a class="twPc-bg twPc-block"></a>
+
+<div>
+  <div class="twPc-button">
+    {% if user.username != profileuser.username %}
+        {% if not followingEachOther %}
+        <form class="text-right" method="post" action="{% url 'profile' username=profileuser.username %}">
+            {% csrf_token %}
+         
+            <button style="font-size:18px;background-color: #1DA1F2;color: white;border-color: inherit;border: none;border-radius: 5px;padding:5px ;" type="submit"> <i class="fa fa-twitter"></i>Follow</button>
+        </form>
+        {% elif followingEachOther %}
+        <form class="text-right" method="post" action="{% url 'profile' username=profileuser.username %}">
+            {% csrf_token %}
+  
+            <button style="font-size:18px;background-color: #1DA1F2;color: white;border-color: inherit;border: none;border-radius: 5px;padding: 5px;" type="submit" > <i class="fa fa-twitter"></i>unfollow</button>
+        </form>
+        {% endif %}
+    {% else %}
+    <br>
+    <br>
+    <div class="text-right">
+      <a href="{% url 'config' username=request.user %}" class="edit"><button id="edit_button"> Profile <i class="fa fa-edit"></i></button></a> 
+           
+  
+  </div>
+  {% endif %}
+</div>
+
+
+  <a title="Mert S. Kaplan" href="{%url 'profile' request.user.username%}" class="twPc-avatarLink">
+    <img alt="profilepic" src="{{profile_photo.photolink}}" class="twPc-avatarImg">
+  </a>
+
+  <div class="twPc-divUser">
+    <div class="twPc-divName">
+      {% if profileuser.first_name and profileuser.last_name %}
+      <a href="https://twitter.com/mertskaplan"> {{profileuser.first_name|title}} {{profileuser.last_name|title}}</a>
+      {%else%}
+      <a href="https://twitter.com/mertskaplan">{{profileuser.username|title}}</a>
+      {%endif%}
+      
+
+    </div>
+    <span>
+      <a href="{%url 'profile' request.user.username%}">@<span> {{profileuser.username|title}}</span></a>
+    </span>
+  </div>
+
+  <div class="twPc-divStats">
+    <ul class="twPc-Arrange ">
+      <li class="twPc-ArrangeSizeFit ">
+        <a href="#" title="9.840 Tweet">
+          <span class="twPc-StatLabel twPc-block">Tweets</span>
+          <span class="twPc-StatValue">{{posts}} </span>
+        </a>
+      </li>
+      <li class="twPc-ArrangeSizeFit">
+        <a href="#" title="885 Following">
+          <span class="twPc-StatLabel twPc-block">Following</span>
+          <span class="twPc-StatValue" class="btn-total-follow" data-toggle="modal" data-target="#following">{{totalfollowing}}</span>
+        </a>
+      </li>
+      <li class="twPc-ArrangeSizeFit">
+        <a href="#" title="1.810 Followers">
+          <span class="twPc-StatLabel twPc-block">Followers</span>
+          <span class="twPc-StatValue" class="btn-total-follow" data-toggle="modal" data-target="#followers">{{totalfollower}}</span>
+        </a>
+      </li>
+      
+      
+    </ul>
+  </div>
+</div>
+</div>
+<!-- code end -->
+
+  <div class="modal fade" id="followers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title details-name" id="exampleModalLongTitle">Total Followers: {{totalfollower}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        {% for follow in follower %}
+        <p class="card-header"><a href="{% url 'profile' username=follow.follower %}">{{follow.follower|title}}</a></p>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="following" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title details-name" id="exampleModalLongTitle">Total Following: {{totalfollowing}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        {% for follow in following %}
+        <p class="card-header"><a href="{% url 'profile' username=follow.target %}">{{follow.target|title}}</a></p>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+    
+
+<br>
+<div class="container">
+    {% for post in page_obj %}
+    <div class="card border-secondary mb-3">
+        <h5 class="card-header"><a href="{% url 'profile' username=post.user %}">{{post.user|title}}</a></h5>
+        <div class="card-body text-secondary">
+            <h6 class="card-subtitle mb-2 text-muted">{{post.date}}</h6>
+            <span id="edit_textarea{{post.id}}">
+            <p class="card-text">{{post.content}}</p>
+            {% if user.is_authenticated %}
+            <br>
+                {% if request.user == post.user %}
+                <button id="edit_button" class="edit{{post.id}}"> Edit <i class="fa fa-edit"></i></button>
+              </span>
+                <p class="total-likes">Likes: {{post.liked.all.count}}</p> 
+                {% elif request.user in post.liked.all %}
+                    <a class="likebutton" href="#" data-catid="{{ post.id }}" id="{{post.id}}" data-total="{{post.liked.all.count}}"  data-value="Unlike" value="submit"><i class="fa fa-heart" id="heart{{post.id}}" style="color:red;"></i><span id="liked{{post.id}}">{{post.liked.all.count}}</span></a>
+                    {% else %}
+                    <a class="likebutton" href="#" data-catid="{{ post.id }}" id="{{post.id}}" data-total="{{post.liked.all.count}}"  data-value="Like" value="submit"><i class="fa fa-heart" id="heart{{post.id}}" style="color:black;"></i><span id="liked{{post.id}}">{{post.liked.all.count}}</span></a>
+                {% endif %}
+            {% else %}
+                <p>Likes: {{post.liked.all.count}}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="container">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?page=1" class="page-link">&laquo; First</a></li>
+            <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link">&laquo; First</a></li>
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+        {% endif %}
+            <li class="page-item"><a class="page-link">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a></li>
+        <li class="page-item"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last &raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link">Next</a></li>
+        <li class="page-item disabled"><a class="page-link">Last &raquo;</a></li>
+        {% endif %}
+    </ul>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+{% endblock %}
